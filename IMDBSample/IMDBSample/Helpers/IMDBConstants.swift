@@ -15,6 +15,7 @@ struct IMDBConstants {
         case nowPlaying = "movie/now_playing"
         case topRated = "movie/top_rated"
         case upcoming = "movie/upcoming"
+        case search = "search/movie"
     }
     
 }

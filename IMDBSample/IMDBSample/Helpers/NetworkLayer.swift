@@ -16,9 +16,16 @@ class NetworkLayer {
     )
     -> AnyPublisher<DataModel, Error>
     where DataModel : Codable {
-        let url = IMDBConstants.baseURL +
+        var url = IMDBConstants.baseURL +
             endPoint.rawValue +
             "?api_key=" + IMDBConstants.apiKey
+        if let parameters = params {
+            url += "&"
+            parameters.keys.forEach { key in
+                url += key + "=" + "\(String(describing: parameters[key] ?? ""))&"
+            }
+            url.removeLast()
+        }
         let urlObject = URL(string: url)!
         var request = URLRequest(url: urlObject)
         request.httpMethod = postRequest ?  "POST" : "GET"
