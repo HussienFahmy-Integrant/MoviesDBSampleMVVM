@@ -9,30 +9,15 @@ import Foundation
 import Combine
 
 class NetworkLayer {
-    func executeRequest<DataModel>(
-        endPoint: IMDBConstants.IMDBEndPoints,
-        params: [String: Any]?,
-        postRequest: Bool = false
+    func get<DataModel>(
+        request: URLRequest
     )
     -> AnyPublisher<DataModel, Error>
     where DataModel : Codable {
-        var url = IMDBConstants.baseURL +
-            endPoint.rawValue +
-            "?api_key=" + IMDBConstants.apiKey
-        if let parameters = params {
-            url += "&"
-            parameters.keys.forEach { key in
-                url += key + "=" + "\(String(describing: parameters[key] ?? ""))&"
-            }
-            url.removeLast()
-        }
-        let urlObject = URL(string: url)!
-        var request = URLRequest(url: urlObject)
-        request.httpMethod = postRequest ?  "POST" : "GET"
         return URLSession.shared.dataTaskPublisher(for: request)
             .map { $0.data }
             .decode(type: DataModel.self, decoder: JSONDecoder().self)
             .eraseToAnyPublisher()
     }
-    
+
 }
