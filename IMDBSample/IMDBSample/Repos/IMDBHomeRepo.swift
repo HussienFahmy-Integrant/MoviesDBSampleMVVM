@@ -7,7 +7,7 @@
 
 import Foundation
 import Combine
-protocol RepoContract {
+protocol HomeRepoContract {
     var networkLayer: IMDBNetworkProcotol { get }
     func trending() -> AnyPublisher<IMDBResponseRootClass, Error>
     func nowPlaying() -> AnyPublisher<IMDBResponseRootClass, Error>
@@ -15,7 +15,7 @@ protocol RepoContract {
     func search(query: String) -> AnyPublisher<IMDBResponseRootClass, Error>
 }
 
-class IMDBRepo: RepoContract {
+class IMDBHomeRepo: HomeRepoContract {
     let networkLayer: IMDBNetworkProcotol = IMDBNetwork()
     
    
@@ -24,20 +24,20 @@ class IMDBRepo: RepoContract {
     }
         
     func trending() -> AnyPublisher<IMDBResponseRootClass, Error> {
-        networkLayer.execute(endPoint: .trendingMoviesDay, params: nil)
+        networkLayer.getExec(endPoint: .trendingMoviesDay, params: nil)
     }
 
     func nowPlaying() -> AnyPublisher<IMDBResponseRootClass, Error> {
-        networkLayer.execute(endPoint: .nowPlaying, params: nil)
+        networkLayer.getExec(endPoint: .nowPlaying, params: nil)
     }
 
     func top() -> AnyPublisher<IMDBResponseRootClass, Error> {
-        networkLayer.execute(endPoint: .topRated, params: nil)
+        networkLayer.getExec(endPoint: .topRated, params: nil)
     }
 
     func search(query: String) -> AnyPublisher<IMDBResponseRootClass, Error> {
         if !query.isEmpty {
-            return networkLayer.execute(endPoint: .search, params: [IMDBParams.query.rawValue: query])
+            return networkLayer.getExec(endPoint: .search, params: [IMDBParams.query.rawValue: query])
         }
         return Empty().eraseToAnyPublisher()
     }

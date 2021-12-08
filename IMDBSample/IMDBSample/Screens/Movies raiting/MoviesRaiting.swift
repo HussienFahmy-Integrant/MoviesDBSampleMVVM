@@ -10,7 +10,7 @@ import Kingfisher
 struct MoviesRaiting: View {
     
 
-    @ObservedObject private var viewModel =  MoviesRaitingviewModel(repo: IMDBRepo())
+    @ObservedObject private var viewModel =  MoviesRaitingviewModel(repo: IMDBHomeRepo())
     var body: some View {
         LoadingView(isShowing: $viewModel.isLoading) {
             TabView {

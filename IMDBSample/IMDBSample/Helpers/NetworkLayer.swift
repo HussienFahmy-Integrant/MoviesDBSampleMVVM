@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 class NetworkLayer {
-    func get<DataModel>(
+    func exec<DataModel>(
         request: URLRequest
     )
     -> AnyPublisher<DataModel, Error>

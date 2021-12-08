@@ -8,14 +8,14 @@
 import Foundation
 import Combine
 protocol IMDBNetworkProcotol {
-    func execute(endPoint: IMDBConstants.IMDBEndPoints, params: [String: Any]?) -> AnyPublisher<IMDBResponseRootClass, Error>
+    func getExec(endPoint: IMDBConstants.IMDBEndPoints, params: [String: Any]?) -> AnyPublisher<IMDBResponseRootClass, Error>
 }
 
 class IMDBNetwork: IMDBNetworkProcotol {
 
     private let networkLayer =  NetworkLayer()   
     
-    func execute(endPoint: IMDBConstants.IMDBEndPoints, params: [String: Any]?) -> AnyPublisher<IMDBResponseRootClass, Error> {
+    func getExec(endPoint: IMDBConstants.IMDBEndPoints, params: [String: Any]?) -> AnyPublisher<IMDBResponseRootClass, Error> {
         var url = IMDBConstants.baseURL +
             endPoint.rawValue +
             "?api_key=" + IMDBConstants.apiKey
@@ -28,7 +28,7 @@ class IMDBNetwork: IMDBNetworkProcotol {
         }
         let urlObject = URL(string: url)!
         let request = URLRequest(url: urlObject)
-        return networkLayer.get(request: request)
+        return networkLayer.exec(request: request)
 
     }
 

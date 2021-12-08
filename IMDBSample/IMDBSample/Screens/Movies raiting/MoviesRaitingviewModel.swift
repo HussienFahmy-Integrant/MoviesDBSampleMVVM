@@ -17,10 +17,10 @@ class MoviesRaitingviewModel: ObservableObject {
     @Published public var searchResults: [IMDBResponseResult] = []
     @Published public var isLoading = false
     
-    let repo : RepoContract
+    let repo : HomeRepoContract
     var subscriptions: [AnyCancellable] = []
 
-    init(repo: RepoContract) {
+    init(repo: HomeRepoContract) {
         self.repo = repo
         
         isLoading.toggle()
