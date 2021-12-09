@@ -14,51 +14,43 @@ struct MoviesRaiting: View {
     var body: some View {
         LoadingView(isShowing: $viewModel.isLoading) {
             TabView {
-                ScrollView(.vertical) {
+                List {
                     ForEach(viewModel.trending, id: \.self) { item in
                         MovieCardView(viewModel: MovieCardViewModel(model: item))
                     }
                 }
-                .padding()
-                .navigationViewStyle(StackNavigationViewStyle())
                 .tabItem { Label(
                     title: { Text("Trending") },
                     icon: { Image(systemName: "1.circle") }
                 ) }
                 
                 
-                ScrollView(.vertical) {
+                List {
                     ForEach(viewModel.nowPlaying, id: \.self) { item in
                         MovieCardView(viewModel: MovieCardViewModel(model: item))
                     }
                 }
-                .padding()
-                .navigationViewStyle(StackNavigationViewStyle())
                 .tabItem { Label(
                     title: { Text("Now Playing") },
                     icon: { Image(systemName: "2.circle") }
                 ) }
                 
-                ScrollView(.vertical) {
+                List {
                     ForEach(viewModel.top, id: \.self) { item in
                         MovieCardView(viewModel: MovieCardViewModel(model: item))
                     }
                 }
-                .padding()
-                .navigationViewStyle(StackNavigationViewStyle())
                 .tabItem { Label(
                     title: { Text("Top") },
                     icon: { Image(systemName: "3.circle") }
                 ) }
                 
-                ScrollView(.vertical) {
+                List {
                     SearchBar(text: $viewModel.searchKeyword)
                     ForEach(viewModel.searchResults, id: \.self) { item in
                         MovieCardView(viewModel: MovieCardViewModel(model: item))
                     }
                 }
-                .padding()
-                .navigationViewStyle(StackNavigationViewStyle())
                 .tabItem { Label(
                     title: { Text("Search") },
                     icon: { Image(systemName: "magnifyingglass") }
