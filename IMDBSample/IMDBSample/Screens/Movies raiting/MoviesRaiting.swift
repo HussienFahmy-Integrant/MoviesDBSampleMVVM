@@ -17,6 +17,8 @@ struct MoviesRaiting: View {
                 List {
                     ForEach(viewModel.trending, id: \.self) { item in
                         MovieCardView(viewModel: MovieCardViewModel(model: item))
+                            .animation(.default)
+
                     }
                 }
                 .tabItem { Label(
@@ -28,6 +30,8 @@ struct MoviesRaiting: View {
                 List {
                     ForEach(viewModel.nowPlaying, id: \.self) { item in
                         MovieCardView(viewModel: MovieCardViewModel(model: item))
+                            .animation(.default)
+
                     }
                 }
                 .tabItem { Label(
@@ -38,6 +42,8 @@ struct MoviesRaiting: View {
                 List {
                     ForEach(viewModel.top, id: \.self) { item in
                         MovieCardView(viewModel: MovieCardViewModel(model: item))
+                            .animation(.default)
+
                     }
                 }
                 .tabItem { Label(
@@ -45,17 +51,22 @@ struct MoviesRaiting: View {
                     icon: { Image(systemName: "3.circle") }
                 ) }
                 
-                List {
-                    SearchBar(text: $viewModel.searchKeyword)
-                    ForEach(viewModel.searchResults, id: \.self) { item in
-                        MovieCardView(viewModel: MovieCardViewModel(model: item))
-                    }
-                }
+//                List {
+//                    SearchBar(text: $viewModel.searchKeyword)
+//                    ForEach(viewModel.searchResults, id: \.self) { item in
+//                        MovieCardView(viewModel: MovieCardViewModel(model: item))
+//                            .animation(.default)
+//
+//                    }
+//                }
                 .tabItem { Label(
                     title: { Text("Search") },
                     icon: { Image(systemName: "magnifyingglass") }
                 ) }
             }
+        }
+        .onAppear {
+            viewModel.onAppear()
         }
  
     }

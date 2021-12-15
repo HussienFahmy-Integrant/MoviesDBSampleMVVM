@@ -9,43 +9,36 @@ import Foundation
 import Combine
 class MoviesRaitingviewModel: ObservableObject {
  
-    @Published public var trending: [IMDBResponseResult] = []
-    @Published public var nowPlaying: [IMDBResponseResult] = []
-    @Published public var upcoming: [IMDBResponseResult] = []
-    @Published public var top: [IMDBResponseResult] = []
+    @Published public var trending: [IMDBRecord] = []
+    @Published public var nowPlaying: [IMDBRecord] = []
+    @Published public var upcoming: [IMDBRecord] = []
+    @Published public var top: [IMDBRecord] = []
     @Published public var searchKeyword = ""
     @Published public var searchResults: [IMDBResponseResult] = []
     @Published public var isLoading = false
     
-    let repo : HomeRepoContract
+    let repo : IMDBHomeRepo
     var subscriptions: [AnyCancellable] = []
 
-    init(repo: HomeRepoContract) {
+    init(repo: IMDBHomeRepo) {
         self.repo = repo
-        
+        composeMoviesListPublishers(repo)
+        composeSearchMoviePublisher()
+    }
+    
+    func composeMoviesListPublishers(_ repo: IMDBHomeRepo) {
         isLoading.toggle()
-        repo.trending().receive(on: DispatchQueue.main).sink {
-            print($0)
-        } receiveValue: {[weak self] result in
+        repo.$domainObject.dropFirst().receive(on: DispatchQueue.main).sink
+        {[weak self] object in
             guard let self = self else { return }
-            self.trending = result.results ?? []
-        }.store(in: &subscriptions)
-
-        repo.nowPlaying().receive(on: DispatchQueue.main).sink {
-            print($0)
-        } receiveValue: {[weak self] result in
-            guard let self = self else { return }
-            self.nowPlaying = result.results ?? []
-        }.store(in: &subscriptions)
-
-        repo.top().receive(on: DispatchQueue.main).sink {
-            print($0)
-        } receiveValue: {[weak self] result in
-            guard let self = self else { return }
-            self.top = result.results ?? []
             self.isLoading.toggle()
+            self.trending = object?.trending ?? []
+            self.nowPlaying = object?.nowPlaying ?? []
+            self.top = object?.top ?? []
         }.store(in: &subscriptions)
-        
+    }
+    
+    func composeSearchMoviePublisher() {
         $searchKeyword.receive(on: DispatchQueue.main).sink {[weak self] keyword in
             guard let self = self else { return }
             if !keyword.isEmpty {
@@ -61,6 +54,10 @@ class MoviesRaitingviewModel: ObservableObject {
                 self.searchResults = []
             }
         }.store(in: &subscriptions)
+    }
+    
+    func onAppear() {
+        repo.loadMoviesList()
     }
 
 }

@@ -7,15 +7,15 @@
 
 import Foundation
 class MovieCardViewModel: ObservableObject {
-    @Published private var model: IMDBResponseResult
+    @Published private var model: IMDBRecord
     public var posterURL: URL {
-        URL(string: model.posterImageW500)!
+        URL(string: model.posterPath)!
     }
     public var movieTitle: String {
-        model.originalTitle ?? ""
+        model.originalTitle
     }
     
-    init(model: IMDBResponseResult) {
+    init(model: IMDBRecord) {
         self.model = model
     }
 }

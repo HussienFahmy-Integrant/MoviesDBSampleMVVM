@@ -7,34 +7,50 @@
 
 import Foundation
 import Combine
-protocol HomeRepoContract {
-    var networkLayer: IMDBNetworkProcotol { get }
-    func trending() -> AnyPublisher<IMDBResponseRootClass, Error>
-    func nowPlaying() -> AnyPublisher<IMDBResponseRootClass, Error>
-    func top() -> AnyPublisher<IMDBResponseRootClass, Error>
-    func search(query: String) -> AnyPublisher<IMDBResponseRootClass, Error>
-}
 
-class IMDBHomeRepo: HomeRepoContract {
-    let networkLayer: IMDBNetworkProcotol = IMDBNetwork()
-    
-   
+class IMDBHomeRepo {
+    public var networkLayer: IMDBNetworkProcotol = IMDBNetwork()
+    @Published var domainObject: IMDBDomain?
+    var subscriptions: [AnyCancellable] = []
     enum IMDBParams: String {
         case query
     }
-        
-    func trending() -> AnyPublisher<IMDBResponseRootClass, Error> {
-        networkLayer.getExec(endPoint: .trendingMoviesDay, params: nil)
-    }
+    
+    func loadMoviesList() {
+      
+        let trending = networkLayer.getExec(endPoint: .trendingMoviesDay, params: nil)
+        let nowPlaying = networkLayer.getExec(endPoint: .nowPlaying, params: nil)
+        let top = networkLayer.getExec(endPoint: .topRated, params: nil)
+       
+        let mapClosure: (IMDBResponseResult) -> (IMDBRecord) = {
+            IMDBRecord(id: $0.id,
+                       originalTitle: $0.originalTitle ?? "",
+                       overview: $0.overview ?? "",
+                       posterPath: $0.posterImageW500,
+                       releaseDate: $0.releaseDate ?? "",
+                       title: $0.title ?? "")
 
-    func nowPlaying() -> AnyPublisher<IMDBResponseRootClass, Error> {
-        networkLayer.getExec(endPoint: .nowPlaying, params: nil)
-    }
+        }
+        trending.zip(nowPlaying, top).sink(receiveCompletion: {print($0)}) {[weak self] (trending, nowPlaying, top) in
+            guard let self = self else { return }
+           
+            let trendingRecords = trending.results?.compactMap {
+                mapClosure($0)
+            }
+            
+            let nowPlayingRecords = nowPlaying.results?.compactMap {
+                mapClosure($0)
+            }
+            
+            let topRecords = top.results?.compactMap {
+                mapClosure($0)
+            }
+            self.domainObject = IMDBDomain(top: topRecords, trending: trendingRecords, nowPlaying: nowPlayingRecords)
+            
+        }.store(in: &subscriptions)
 
-    func top() -> AnyPublisher<IMDBResponseRootClass, Error> {
-        networkLayer.getExec(endPoint: .topRated, params: nil)
     }
-
+    
     func search(query: String) -> AnyPublisher<IMDBResponseRootClass, Error> {
         if !query.isEmpty {
             return networkLayer.getExec(endPoint: .search, params: [IMDBParams.query.rawValue: query])
