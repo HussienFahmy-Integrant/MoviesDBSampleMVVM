@@ -18,10 +18,6 @@ class IMDBHomeRepo {
     
     func loadMoviesList() {
       
-        let trending = networkLayer.getExec(endPoint: .trendingMoviesDay, params: nil)
-        let nowPlaying = networkLayer.getExec(endPoint: .nowPlaying, params: nil)
-        let top = networkLayer.getExec(endPoint: .topRated, params: nil)
-       
         let mapClosure: (IMDBResponseResult) -> (IMDBRecord) = {
             IMDBRecord(id: $0.id,
                        originalTitle: $0.originalTitle ?? "",
@@ -29,20 +25,25 @@ class IMDBHomeRepo {
                        posterPath: $0.posterImageW500,
                        releaseDate: $0.releaseDate ?? "",
                        title: $0.title ?? "")
-
         }
+        
+        let trending = networkLayer.getExec(endPoint: .trendingMoviesDay, params: nil).map { $0.results }
+        let nowPlaying = networkLayer.getExec(endPoint: .nowPlaying, params: nil).map { $0.results }
+        let top = networkLayer.getExec(endPoint: .topRated, params: nil).map { $0.results }
+       
+       
         trending.zip(nowPlaying, top).sink(receiveCompletion: {print($0)}) {[weak self] (trending, nowPlaying, top) in
             guard let self = self else { return }
            
-            let trendingRecords = trending.results?.compactMap {
+            let trendingRecords = trending?.compactMap {
                 mapClosure($0)
             }
             
-            let nowPlayingRecords = nowPlaying.results?.compactMap {
+            let nowPlayingRecords = nowPlaying?.compactMap {
                 mapClosure($0)
             }
             
-            let topRecords = top.results?.compactMap {
+            let topRecords = top?.compactMap {
                 mapClosure($0)
             }
             self.domainObject = IMDBDomain(top: topRecords, trending: trendingRecords, nowPlaying: nowPlayingRecords)
