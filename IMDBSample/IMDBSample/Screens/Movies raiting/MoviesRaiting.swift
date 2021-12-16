@@ -23,7 +23,7 @@ struct MoviesRaiting: View {
                 }
                 .tabItem { Label(
                     title: { Text("Trending") },
-                    icon: { Image(systemName: "1.circle") }
+                    icon: { Image(systemName: "arrow.up.backward.circle") }
                 ) }
                 
                 
@@ -36,7 +36,7 @@ struct MoviesRaiting: View {
                 }
                 .tabItem { Label(
                     title: { Text("Now Playing") },
-                    icon: { Image(systemName: "2.circle") }
+                    icon: { Image(systemName: "clock.arrow.circlepath") }
                 ) }
                 
                 List {
@@ -48,7 +48,7 @@ struct MoviesRaiting: View {
                 }
                 .tabItem { Label(
                     title: { Text("Top") },
-                    icon: { Image(systemName: "3.circle") }
+                    icon: { Image(systemName: "chart.bar") }
                 ) }
                 
                 List {
