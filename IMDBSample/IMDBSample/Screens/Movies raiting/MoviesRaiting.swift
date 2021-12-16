@@ -65,10 +65,6 @@ struct MoviesRaiting: View {
                 ) }
             }
         }
-        .onAppear {
-            viewModel.onAppear()
-        }
- 
     }
 }
 

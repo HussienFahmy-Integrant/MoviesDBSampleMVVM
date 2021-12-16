@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 class MoviesRaitingviewModel: ObservableObject {
- 
+    
     @Published public var trending: [IMDBRecord] = []
     @Published public var nowPlaying: [IMDBRecord] = []
     @Published public var upcoming: [IMDBRecord] = []
@@ -17,10 +17,10 @@ class MoviesRaitingviewModel: ObservableObject {
     @Published public var searchResults: [IMDBRecord] = []
     @Published public var isLoading = false
     
-    let repo : IMDBHomeRepo
+    let repo : IMDBHomeRepoProtocol
     var subscriptions: [AnyCancellable] = []
-
-    init(repo: IMDBHomeRepo) {
+    
+    init(repo: IMDBHomeRepoProtocol) {
         self.repo = repo
         composeMoviesListPublishers()
         composeSearchMoviePublisher()
@@ -28,33 +28,27 @@ class MoviesRaitingviewModel: ObservableObject {
     
     func composeMoviesListPublishers() {
         isLoading.toggle()
-        repo.$domainObject.receive(on: DispatchQueue.main).sink
-        {[weak self] object in
+        repo.loadMoviesList().receive(on: DispatchQueue.main).sink {
+            print($0)
+        } receiveValue: {[weak self] resultTuple in
             guard let self = self else { return }
-            if let object = object {
-                self.isLoading.toggle()
-                self.trending = object.trending ?? []
-                self.nowPlaying = object.nowPlaying ?? []
-                self.top = object.top ?? []
-                self.searchResults = object.searchResults ?? []
-            } else {
-                print("Error: fail to receiving results")
-            }
+            self.isLoading.toggle()
+            self.trending = resultTuple.trending ?? []
+            self.nowPlaying = resultTuple.nowPlaying ?? []
+            self.top = resultTuple.top ?? []
         }.store(in: &subscriptions)
     }
     
     func composeSearchMoviePublisher() {
-        $searchKeyword.receive(on: DispatchQueue.main).sink {[weak self] keyword in
+        $searchKeyword.debounce(for: .milliseconds(800), scheduler: RunLoop.main).sink {[weak self] keyword in
             guard let self = self else { return }
             if !keyword.isEmpty {
                 self.isLoading.toggle()
-                self.repo.search(query: keyword)
+                self.repo.search(query: keyword).receive(on: DispatchQueue.main).sink(receiveCompletion: {print($0)}) { results in
+                    self.searchResults = results
+                    self.isLoading.toggle()
+                }.store(in: &self.subscriptions)
             }
         }.store(in: &subscriptions)
     }
-    
-    func onAppear() {
-        repo.loadMoviesList()
-    }
-
 }

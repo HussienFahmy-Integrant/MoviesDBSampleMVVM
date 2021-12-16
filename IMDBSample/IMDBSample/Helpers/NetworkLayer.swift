@@ -15,7 +15,7 @@ public protocol NetworkLayerProtocol {
     where DataModel : Codable
 }
 
-class NetworkLayer: NetworkLayerProtocol {
+final class NetworkLayer: NetworkLayerProtocol {
     func exec<DataModel>(
         request: URLRequest
     )

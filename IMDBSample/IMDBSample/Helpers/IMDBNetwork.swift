@@ -12,7 +12,7 @@ public protocol IMDBNetworkProcotol {
     func getExec(endPoint: IMDBConstants.IMDBEndPoints, params: [String: Any]?) -> AnyPublisher<IMDBResponseRootClass, Error>
 }
 
-class IMDBNetwork: IMDBNetworkProcotol {
+final class IMDBNetwork: IMDBNetworkProcotol {
     var networkLayer: NetworkLayerProtocol = NetworkLayer()    
     
     func getExec(endPoint: IMDBConstants.IMDBEndPoints, params: [String: Any]?) -> AnyPublisher<IMDBResponseRootClass, Error> {

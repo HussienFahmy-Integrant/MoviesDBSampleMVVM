@@ -7,20 +7,7 @@
 
 import Foundation
 import Combine
-class IMDBDomain: ObservableObject {
-    var top: [IMDBRecord]? = nil
-    var trending: [IMDBRecord]? = nil
-    var nowPlaying: [IMDBRecord]? = nil
-    var searchResults: [IMDBRecord]? = nil
-    init(top: [IMDBRecord]? = nil, trending: [IMDBRecord]? = nil, nowPlaying: [IMDBRecord]? = nil, searchResults: [IMDBRecord]? = nil) {
-        self.top = top
-        self.trending = trending
-        self.nowPlaying = nowPlaying
-        self.searchResults = searchResults
-    }
-}
-
-class IMDBRecord: ObservableObject, Hashable {
+public class IMDBRecord: ObservableObject, Hashable {
     var id : Int? = nil
     var originalTitle : String = ""
     var overview : String = ""
@@ -37,11 +24,11 @@ class IMDBRecord: ObservableObject, Hashable {
         self.title = title
     }
     
-    static func == (lhs: IMDBRecord, rhs: IMDBRecord) -> Bool {
+    public static func == (lhs: IMDBRecord, rhs: IMDBRecord) -> Bool {
         return (lhs.id ?? 0) == (rhs.id ?? 0)
     }
     
-    func hash(into hasher: inout Hasher) {
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(id ?? 0)
     }
 }

@@ -20,36 +20,22 @@ class IMDBSampleTests: XCTestCase {
     }
     
     func testRepoLoadMovies() {
-        repo.loadMoviesList()
         let expectation = expectation(description: "load movies list")
-        repo.$domainObject.dropFirst().sink { domainObject in
+        repo.loadMoviesList().sink(receiveCompletion: {print($0)}) { resultTuple in
             expectation.fulfill()
-            XCTAssertNotNil(domainObject)
-            XCTAssertEqual(domainObject?.nowPlaying?.count , 20)
-            XCTAssertEqual(domainObject?.top?.count , 20)
-            XCTAssertEqual(domainObject?.trending?.count , 20)
+            XCTAssertEqual((resultTuple.trending ?? []).count, 20)
+            XCTAssertEqual((resultTuple.nowPlaying ?? []).count, 20)
+            XCTAssertEqual((resultTuple.top ?? []).count, 20)
         }.store(in: &subscriptions)
         wait(for: [expectation], timeout: 0.1)
     }
     
     func testRepoSearchMovie() {
-        repo.search(query: "avatar")
         let expectation = expectation(description: "search movie")
-        repo.$domainObject.dropFirst().sink { domainObject in
+        repo.search(query: "avatar").sink(receiveCompletion: {print($0)}) { result in
             expectation.fulfill()
-            XCTAssertNotNil(domainObject)
-            XCTAssertEqual(domainObject?.searchResults?.count , 20)
+            XCTAssertEqual(result.count, 20)
         }.store(in: &subscriptions)
         wait(for: [expectation], timeout: 0.1)
-    }
-    
-    func testMoviesRaitingViewModel() {
-        viewModel?.onAppear()
-        let expectation = expectation(description: "setup view model")
-        viewModel?.$nowPlaying.dropFirst().sink { movies in
-            expectation.fulfill()
-            XCTAssertEqual(movies.count, 20)
-        }.store(in: &subscriptions)
-        wait(for: [expectation], timeout: 3)
     }
 }

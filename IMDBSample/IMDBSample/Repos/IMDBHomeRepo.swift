@@ -7,10 +7,16 @@
 
 import Foundation
 import Combine
-
-class IMDBHomeRepo {
-   
+public typealias IMDBHomeRecordsTuple = (top: [IMDBRecord]?,trending: [IMDBRecord]?,nowPlaying: [IMDBRecord]?)
+protocol IMDBHomeRepoProtocol {
+    var networkHandler: IMDBNetworkProcotol { set get }
+    func loadMoviesList() -> AnyPublisher<IMDBHomeRecordsTuple, Error>
+    func search(query: String) -> AnyPublisher<[IMDBRecord], Error>
+}
+final class IMDBHomeRepo: IMDBHomeRepoProtocol {
+    
     public var networkHandler: IMDBNetworkProcotol = IMDBNetwork()
+   
     private let mapClosure: (IMDBResponseResult) -> (IMDBRecord) = {
         IMDBRecord(id: $0.id,
                    originalTitle: $0.originalTitle ?? "",
@@ -19,22 +25,19 @@ class IMDBHomeRepo {
                    releaseDate: $0.releaseDate ?? "",
                    title: $0.title ?? "")
     }
-
-    @Published var domainObject: IMDBDomain?
-    var subscriptions: [AnyCancellable] = []
+    
     
     enum IMDBParams: String {
         case query
     }
     
-    func loadMoviesList() {
+    func loadMoviesList() -> AnyPublisher<IMDBHomeRecordsTuple, Error> {
+      
         let trending = networkHandler.getExec(endPoint: .trendingMoviesDay, params: nil).map { $0.results }
         let nowPlaying = networkHandler.getExec(endPoint: .nowPlaying, params: nil).map { $0.results }
         let top = networkHandler.getExec(endPoint: .topRated, params: nil).map { $0.results }
-       
-       
-        trending.zip(nowPlaying, top).sink(receiveCompletion: {print($0)}) {[weak self] (trending, nowPlaying, top) in
-            guard let self = self else { return }
+        
+        return trending.zip(nowPlaying, top).map { (trending, nowPlaying, top) in
            
             let trendingRecords = trending?.compactMap {
                 self.mapClosure($0)
@@ -47,25 +50,19 @@ class IMDBHomeRepo {
             let topRecords = top?.compactMap {
                 self.mapClosure($0)
             }
-            self.domainObject = IMDBDomain(top: topRecords, trending: trendingRecords, nowPlaying: nowPlayingRecords)
-            
-        }.store(in: &subscriptions)
-
+            return (top: topRecords,trending: trendingRecords,nowPlaying: nowPlayingRecords)
+        }.eraseToAnyPublisher()
     }
     
-    func search(query: String) {
-        if !query.isEmpty {
-            networkHandler.getExec(endPoint: .search, params: [IMDBParams.query.rawValue: query]).map { $0.results }
-                .sink(receiveCompletion: {print($0)}) {[weak self] searchResults in
-                    guard let self = self else { return }
-                    let resultsMapped = searchResults?.compactMap {
-                        self.mapClosure($0)
-                    }
-                    self.domainObject = IMDBDomain(top: self.domainObject?.top,
-                                                   trending: self.domainObject?.trending,
-                                                   nowPlaying: self.domainObject?.nowPlaying,
-                                                   searchResults: resultsMapped)
-                }.store(in: &subscriptions)
-        }
+    func search(query: String) -> AnyPublisher<[IMDBRecord], Error> {
+        return networkHandler.getExec(endPoint: .search,
+                                                       params: [IMDBParams.query.rawValue: query])
+            .map {
+                let results = $0.results ?? []
+                return results.compactMap {
+                    self.mapClosure($0)
+                }
+            }
+            .eraseToAnyPublisher()
     }
 }
