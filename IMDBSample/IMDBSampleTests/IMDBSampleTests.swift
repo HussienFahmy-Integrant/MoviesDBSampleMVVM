@@ -11,12 +11,10 @@ import Combine
 class IMDBSampleTests: XCTestCase {
     var subscriptions: Set<AnyCancellable> = []
     let repo = IMDBHomeRepo()
-    var viewModel: MoviesRaitingviewModel?
-
+    
     override func setUp() {
         super.setUp()
         repo.networkHandler = MockIMDBNetwork()
-        viewModel = MoviesRaitingviewModel(repo: repo)
     }
     
     func testRepoLoadMovies() {
@@ -35,6 +33,15 @@ class IMDBSampleTests: XCTestCase {
         repo.search(query: "avatar").sink(receiveCompletion: {print($0)}) { result in
             expectation.fulfill()
             XCTAssertEqual(result.count, 20)
+        }.store(in: &subscriptions)
+        wait(for: [expectation], timeout: 0.1)
+    }
+    
+    func testRepoSearchMovieEmpty() {
+        let expectation = expectation(description: "search movie empty")
+        repo.search(query: "").sink(receiveCompletion: {print($0)}) { result in
+            expectation.fulfill()
+            XCTAssertEqual(result.count, 0)
         }.store(in: &subscriptions)
         wait(for: [expectation], timeout: 0.1)
     }
