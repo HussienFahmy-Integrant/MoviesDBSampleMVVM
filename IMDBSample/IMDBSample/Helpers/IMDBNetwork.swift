@@ -30,7 +30,7 @@ final class IMDBNetwork: IMDBNetworkProcotol {
         let urlObject = URL(string: url)!
         let request = URLRequest(url: urlObject)
         return networkLayer.exec(request: request)
-
+        
     }
-
+    
 }

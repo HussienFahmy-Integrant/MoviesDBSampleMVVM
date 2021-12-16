@@ -9,7 +9,7 @@ import SwiftUI
 import Kingfisher
 struct MoviesRaiting: View {
     
-
+    
     @ObservedObject private var viewModel =  MoviesRaitingviewModel(repo: IMDBHomeRepo())
     var body: some View {
         LoadingView(isShowing: $viewModel.isLoading) {
@@ -18,7 +18,7 @@ struct MoviesRaiting: View {
                     ForEach(viewModel.trending, id: \.self) { item in
                         MovieCardView(viewModel: MovieCardViewModel(model: item))
                             .animation(.default)
-
+                        
                     }
                 }
                 .tabItem { Label(
@@ -31,7 +31,7 @@ struct MoviesRaiting: View {
                     ForEach(viewModel.nowPlaying, id: \.self) { item in
                         MovieCardView(viewModel: MovieCardViewModel(model: item))
                             .animation(.default)
-
+                        
                     }
                 }
                 .tabItem { Label(
@@ -43,7 +43,7 @@ struct MoviesRaiting: View {
                     ForEach(viewModel.top, id: \.self) { item in
                         MovieCardView(viewModel: MovieCardViewModel(model: item))
                             .animation(.default)
-
+                        
                     }
                 }
                 .tabItem { Label(
@@ -56,7 +56,7 @@ struct MoviesRaiting: View {
                     ForEach(viewModel.searchResults, id: \.self) { item in
                         MovieCardView(viewModel: MovieCardViewModel(model: item))
                             .animation(.default)
-
+                        
                     }
                 }
                 .tabItem { Label(

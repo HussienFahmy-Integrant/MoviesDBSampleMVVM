@@ -26,5 +26,5 @@ final class NetworkLayer: NetworkLayerProtocol {
             .decode(type: DataModel.self, decoder: JSONDecoder().self)
             .eraseToAnyPublisher()
     }
-
+    
 }

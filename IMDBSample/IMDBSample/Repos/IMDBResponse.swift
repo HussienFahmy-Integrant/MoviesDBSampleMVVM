@@ -9,27 +9,27 @@ import Foundation
 
 import Foundation
 public struct IMDBResponseRootClass : Codable {
-
-        let page : Int?
-        let results : [IMDBResponseResult]?
-        let totalPages : Int?
-        let totalResults : Int?
-
-        enum CodingKeys: String, CodingKey {
-                case page = "page"
-                case results = "results"
-                case totalPages = "total_pages"
-                case totalResults = "total_results"
-        }
+    
+    let page : Int?
+    let results : [IMDBResponseResult]?
+    let totalPages : Int?
+    let totalResults : Int?
+    
+    enum CodingKeys: String, CodingKey {
+        case page = "page"
+        case results = "results"
+        case totalPages = "total_pages"
+        case totalResults = "total_results"
+    }
     
     public init(from decoder: Decoder) throws {
-                let values = try decoder.container(keyedBy: CodingKeys.self)
-                page = try values.decodeIfPresent(Int.self, forKey: .page)
-                results = try values.decodeIfPresent([IMDBResponseResult].self, forKey: .results)
-                totalPages = try values.decodeIfPresent(Int.self, forKey: .totalPages)
-                totalResults = try values.decodeIfPresent(Int.self, forKey: .totalResults)
-        }
-
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        page = try values.decodeIfPresent(Int.self, forKey: .page)
+        results = try values.decodeIfPresent([IMDBResponseResult].self, forKey: .results)
+        totalPages = try values.decodeIfPresent(Int.self, forKey: .totalPages)
+        totalResults = try values.decodeIfPresent(Int.self, forKey: .totalResults)
+    }
+    
 }
 
 class IMDBResponseResult : Codable, ObservableObject, Hashable {
