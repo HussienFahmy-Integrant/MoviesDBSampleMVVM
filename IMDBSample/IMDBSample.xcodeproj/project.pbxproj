@@ -9,6 +9,11 @@
 /* Begin PBXBuildFile section */
 		6925A78C275F9CD4006410A7 /* IMDBNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6925A78B275F9CD4006410A7 /* IMDBNetwork.swift */; };
 		69577586276A37F300683386 /* IMDBRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69577585276A37F300683386 /* IMDBRecord.swift */; };
+		6957758A276B80A100683386 /* MockIMDBNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69577589276B80A100683386 /* MockIMDBNetwork.swift */; };
+		6957758F276B85F900683386 /* trending.json in Resources */ = {isa = PBXBuildFile; fileRef = 6957758C276B81AA00683386 /* trending.json */; };
+		69577590276B85FC00683386 /* topRated.json in Resources */ = {isa = PBXBuildFile; fileRef = 6957758D276B821F00683386 /* topRated.json */; };
+		69577591276B860000683386 /* nowPlaying.json in Resources */ = {isa = PBXBuildFile; fileRef = 6957758E276B823200683386 /* nowPlaying.json */; };
+		69577593276B8D2600683386 /* search.json in Resources */ = {isa = PBXBuildFile; fileRef = 69577592276B8C6800683386 /* search.json */; };
 		6986EDEF274FBF4F007F7E89 /* IMDBSampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6986EDEE274FBF4F007F7E89 /* IMDBSampleApp.swift */; };
 		6986EDF1274FBF4F007F7E89 /* MoviesRaiting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6986EDF0274FBF4F007F7E89 /* MoviesRaiting.swift */; };
 		6986EDF3274FBF50007F7E89 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6986EDF2274FBF50007F7E89 /* Assets.xcassets */; };
@@ -42,6 +47,11 @@
 		578EF1B95DF34FA5C6161E5B /* Pods-IMDBSample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IMDBSample.debug.xcconfig"; path = "Target Support Files/Pods-IMDBSample/Pods-IMDBSample.debug.xcconfig"; sourceTree = "<group>"; };
 		6925A78B275F9CD4006410A7 /* IMDBNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IMDBNetwork.swift; sourceTree = "<group>"; };
 		69577585276A37F300683386 /* IMDBRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IMDBRecord.swift; sourceTree = "<group>"; };
+		69577589276B80A100683386 /* MockIMDBNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockIMDBNetwork.swift; sourceTree = "<group>"; };
+		6957758C276B81AA00683386 /* trending.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = trending.json; sourceTree = "<group>"; };
+		6957758D276B821F00683386 /* topRated.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = topRated.json; sourceTree = "<group>"; };
+		6957758E276B823200683386 /* nowPlaying.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = nowPlaying.json; sourceTree = "<group>"; };
+		69577592276B8C6800683386 /* search.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = search.json; sourceTree = "<group>"; };
 		6986EDEB274FBF4F007F7E89 /* IMDBSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IMDBSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6986EDEE274FBF4F007F7E89 /* IMDBSampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IMDBSampleApp.swift; sourceTree = "<group>"; };
 		6986EDF0274FBF4F007F7E89 /* MoviesRaiting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesRaiting.swift; sourceTree = "<group>"; };
@@ -86,6 +96,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6957758B276B818900683386 /* Json mock data */ = {
+			isa = PBXGroup;
+			children = (
+				6957758C276B81AA00683386 /* trending.json */,
+				6957758D276B821F00683386 /* topRated.json */,
+				6957758E276B823200683386 /* nowPlaying.json */,
+				69577592276B8C6800683386 /* search.json */,
+			);
+			path = "Json mock data";
+			sourceTree = "<group>";
+		};
 		6986EDE2274FBF4F007F7E89 = {
 			isa = PBXGroup;
 			children = (
@@ -152,8 +173,10 @@
 		6986EE13274FD085007F7E89 /* IMDBSampleTests */ = {
 			isa = PBXGroup;
 			children = (
+				6957758B276B818900683386 /* Json mock data */,
 				6986EE14274FD085007F7E89 /* IMDBSampleTests.swift */,
 				6986EE16274FD086007F7E89 /* Info.plist */,
+				69577589276B80A100683386 /* MockIMDBNetwork.swift */,
 			);
 			path = IMDBSampleTests;
 			sourceTree = "<group>";
@@ -298,6 +321,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				69577590276B85FC00683386 /* topRated.json in Resources */,
+				69577593276B8D2600683386 /* search.json in Resources */,
+				69577591276B860000683386 /* nowPlaying.json in Resources */,
+				6957758F276B85F900683386 /* trending.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -392,6 +419,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6957758A276B80A100683386 /* MockIMDBNetwork.swift in Sources */,
 				6986EE15274FD085007F7E89 /* IMDBSampleTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

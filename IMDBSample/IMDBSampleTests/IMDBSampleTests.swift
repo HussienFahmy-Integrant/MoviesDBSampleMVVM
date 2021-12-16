@@ -10,49 +10,46 @@ import Combine
 @testable import IMDBSample
 class IMDBSampleTests: XCTestCase {
     var subscriptions: Set<AnyCancellable> = []
-    let repo = IMDBRepo()
+    let repo = IMDBHomeRepo()
+    var viewModel: MoviesRaitingviewModel?
 
     override func setUp() {
         super.setUp()
+        repo.networkHandler = MockIMDBNetwork()
+        viewModel = MoviesRaitingviewModel(repo: repo)
     }
     
-    func testTrendingPopular() {
-        let expection = XCTestExpectation(description: "Getting trending movies")
-        repo.trending().sink { _ in
-        } receiveValue: { movies in
-            expection.fulfill()
-            XCTAssertTrue(movies.results?.count ?? 0 > 0)
+    func testRepoLoadMovies() {
+        repo.loadMoviesList()
+        let expectation = expectation(description: "load movies list")
+        repo.$domainObject.dropFirst().sink { domainObject in
+            expectation.fulfill()
+            XCTAssertNotNil(domainObject)
+            XCTAssertEqual(domainObject?.nowPlaying?.count , 20)
+            XCTAssertEqual(domainObject?.top?.count , 20)
+            XCTAssertEqual(domainObject?.trending?.count , 20)
         }.store(in: &subscriptions)
-        wait(for: [expection], timeout: 4)
+        wait(for: [expectation], timeout: 0.1)
     }
     
-    func testNowPlaying() {
-        let expection = XCTestExpectation(description: "now playing movies")
-        repo.nowPlaying().sink { _ in
-        } receiveValue: { movies in
-            expection.fulfill()
-            XCTAssertTrue(movies.results?.count ?? 0 > 0)
+    func testRepoSearchMovie() {
+        repo.search(query: "avatar")
+        let expectation = expectation(description: "search movie")
+        repo.$domainObject.dropFirst().sink { domainObject in
+            expectation.fulfill()
+            XCTAssertNotNil(domainObject)
+            XCTAssertEqual(domainObject?.searchResults?.count , 20)
         }.store(in: &subscriptions)
-        wait(for: [expection], timeout: 2)
+        wait(for: [expectation], timeout: 0.1)
     }
     
-    func testTop() {
-        let expection = XCTestExpectation(description: "top movies")
-        repo.top().sink { _ in
-        } receiveValue: { movies in
-            expection.fulfill()
-            XCTAssertTrue(movies.results?.count ?? 0 > 0)
+    func testMoviesRaitingViewModel() {
+        viewModel?.onAppear()
+        let expectation = expectation(description: "setup view model")
+        viewModel?.$nowPlaying.dropFirst().sink { movies in
+            expectation.fulfill()
+            XCTAssertEqual(movies.count, 20)
         }.store(in: &subscriptions)
-        wait(for: [expection], timeout: 2)
-    }
-    
-    func testUpcoming() {
-        let expection = XCTestExpectation(description: "upcoming movies")
-        repo.upcoming().sink { _ in
-        } receiveValue: { movies in
-            expection.fulfill()
-            XCTAssertTrue(movies.results?.count ?? 0 > 0)
-        }.store(in: &subscriptions)
-        wait(for: [expection], timeout: 2)
+        wait(for: [expectation], timeout: 3)
     }
 }

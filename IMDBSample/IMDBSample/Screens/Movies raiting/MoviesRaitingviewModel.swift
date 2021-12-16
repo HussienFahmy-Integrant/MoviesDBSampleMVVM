@@ -22,11 +22,11 @@ class MoviesRaitingviewModel: ObservableObject {
 
     init(repo: IMDBHomeRepo) {
         self.repo = repo
-        composeMoviesListPublishers(repo)
+        composeMoviesListPublishers()
         composeSearchMoviePublisher()
     }
     
-    func composeMoviesListPublishers(_ repo: IMDBHomeRepo) {
+    func composeMoviesListPublishers() {
         isLoading.toggle()
         repo.$domainObject.receive(on: DispatchQueue.main).sink
         {[weak self] object in
@@ -37,6 +37,8 @@ class MoviesRaitingviewModel: ObservableObject {
                 self.nowPlaying = object.nowPlaying ?? []
                 self.top = object.top ?? []
                 self.searchResults = object.searchResults ?? []
+            } else {
+                print("Error: fail to receiving results")
             }
         }.store(in: &subscriptions)
     }
