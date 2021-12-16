@@ -14,7 +14,7 @@ class MoviesRaitingviewModel: ObservableObject {
     @Published public var upcoming: [IMDBRecord] = []
     @Published public var top: [IMDBRecord] = []
     @Published public var searchKeyword = ""
-    @Published public var searchResults: [IMDBResponseResult] = []
+    @Published public var searchResults: [IMDBRecord] = []
     @Published public var isLoading = false
     
     let repo : IMDBHomeRepo
@@ -28,13 +28,16 @@ class MoviesRaitingviewModel: ObservableObject {
     
     func composeMoviesListPublishers(_ repo: IMDBHomeRepo) {
         isLoading.toggle()
-        repo.$domainObject.dropFirst().receive(on: DispatchQueue.main).sink
+        repo.$domainObject.receive(on: DispatchQueue.main).sink
         {[weak self] object in
             guard let self = self else { return }
-            self.isLoading.toggle()
-            self.trending = object?.trending ?? []
-            self.nowPlaying = object?.nowPlaying ?? []
-            self.top = object?.top ?? []
+            if let object = object {
+                self.isLoading.toggle()
+                self.trending = object.trending ?? []
+                self.nowPlaying = object.nowPlaying ?? []
+                self.top = object.top ?? []
+                self.searchResults = object.searchResults ?? []
+            }
         }.store(in: &subscriptions)
     }
     
@@ -43,15 +46,7 @@ class MoviesRaitingviewModel: ObservableObject {
             guard let self = self else { return }
             if !keyword.isEmpty {
                 self.isLoading.toggle()
-                self.repo.search(query: keyword).receive(on: DispatchQueue.main).sink {
-                    print($0)
-                } receiveValue: {[weak self] result in
-                    guard let self = self else { return }
-                    self.searchResults = result.results ?? []
-                    self.isLoading.toggle()
-                }.store(in: &self.subscriptions)
-            } else {
-                self.searchResults = []
+                self.repo.search(query: keyword)
             }
         }.store(in: &subscriptions)
     }

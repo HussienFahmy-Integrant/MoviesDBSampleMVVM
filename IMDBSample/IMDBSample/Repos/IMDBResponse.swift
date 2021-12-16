@@ -8,7 +8,7 @@
 import Foundation
 
 import Foundation
-struct IMDBResponseRootClass : Codable {
+public struct IMDBResponseRootClass : Codable {
 
         let page : Int?
         let results : [IMDBResponseResult]?
@@ -22,7 +22,7 @@ struct IMDBResponseRootClass : Codable {
                 case totalResults = "total_results"
         }
     
-        init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
                 let values = try decoder.container(keyedBy: CodingKeys.self)
                 page = try values.decodeIfPresent(Int.self, forKey: .page)
                 results = try values.decodeIfPresent([IMDBResponseResult].self, forKey: .results)

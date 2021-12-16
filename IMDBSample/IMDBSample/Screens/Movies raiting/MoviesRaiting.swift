@@ -51,14 +51,14 @@ struct MoviesRaiting: View {
                     icon: { Image(systemName: "3.circle") }
                 ) }
                 
-//                List {
-//                    SearchBar(text: $viewModel.searchKeyword)
-//                    ForEach(viewModel.searchResults, id: \.self) { item in
-//                        MovieCardView(viewModel: MovieCardViewModel(model: item))
-//                            .animation(.default)
-//
-//                    }
-//                }
+                List {
+                    SearchBar(text: $viewModel.searchKeyword)
+                    ForEach(viewModel.searchResults, id: \.self) { item in
+                        MovieCardView(viewModel: MovieCardViewModel(model: item))
+                            .animation(.default)
+
+                    }
+                }
                 .tabItem { Label(
                     title: { Text("Search") },
                     icon: { Image(systemName: "magnifyingglass") }

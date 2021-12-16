@@ -7,13 +7,13 @@
 
 import Foundation
 import Combine
-protocol IMDBNetworkProcotol {
+public protocol IMDBNetworkProcotol {
+    var networkLayer: NetworkLayerProtocol { get set }
     func getExec(endPoint: IMDBConstants.IMDBEndPoints, params: [String: Any]?) -> AnyPublisher<IMDBResponseRootClass, Error>
 }
 
 class IMDBNetwork: IMDBNetworkProcotol {
-
-    private let networkLayer =  NetworkLayer()   
+    var networkLayer: NetworkLayerProtocol = NetworkLayer()    
     
     func getExec(endPoint: IMDBConstants.IMDBEndPoints, params: [String: Any]?) -> AnyPublisher<IMDBResponseRootClass, Error> {
         var url = IMDBConstants.baseURL +
@@ -26,6 +26,7 @@ class IMDBNetwork: IMDBNetworkProcotol {
             }
             url.removeLast()
         }
+        url = url.replacingOccurrences(of: " ", with: "+")
         let urlObject = URL(string: url)!
         let request = URLRequest(url: urlObject)
         return networkLayer.exec(request: request)

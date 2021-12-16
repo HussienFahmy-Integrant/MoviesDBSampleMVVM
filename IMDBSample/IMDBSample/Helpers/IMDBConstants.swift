@@ -6,7 +6,7 @@
 //
 
 import Foundation
-struct IMDBConstants {
+public struct IMDBConstants {
     static let apiKey = "1330e694c7c90b77eee730df6ebb99fd"
     static let baseURL = "https://api.themoviedb.org/3/"
         

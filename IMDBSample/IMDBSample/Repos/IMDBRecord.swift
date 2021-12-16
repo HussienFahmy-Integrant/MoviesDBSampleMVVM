@@ -12,7 +12,7 @@ class IMDBDomain: ObservableObject {
     var trending: [IMDBRecord]? = nil
     var nowPlaying: [IMDBRecord]? = nil
     var searchResults: [IMDBRecord]? = nil
-    init(top: [IMDBRecord]?, trending: [IMDBRecord]?, nowPlaying: [IMDBRecord]?, searchResults: [IMDBRecord]? = nil) {
+    init(top: [IMDBRecord]? = nil, trending: [IMDBRecord]? = nil, nowPlaying: [IMDBRecord]? = nil, searchResults: [IMDBRecord]? = nil) {
         self.top = top
         self.trending = trending
         self.nowPlaying = nowPlaying

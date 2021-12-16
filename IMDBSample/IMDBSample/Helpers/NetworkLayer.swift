@@ -7,8 +7,15 @@
 
 import Foundation
 import Combine
+public protocol NetworkLayerProtocol {
+    func exec<DataModel>(
+        request: URLRequest
+    )
+    -> AnyPublisher<DataModel, Error>
+    where DataModel : Codable
+}
 
-class NetworkLayer {
+class NetworkLayer: NetworkLayerProtocol {
     func exec<DataModel>(
         request: URLRequest
     )
