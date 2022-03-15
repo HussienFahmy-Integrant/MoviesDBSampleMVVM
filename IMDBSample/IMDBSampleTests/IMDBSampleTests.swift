@@ -18,31 +18,14 @@ class IMDBSampleTests: XCTestCase {
     }
     
     func testRepoLoadMovies() {
-        let expectation = expectation(description: "load movies list")
-        repo.loadMoviesList().sink(receiveCompletion: {print($0)}) { resultTuple in
-            expectation.fulfill()
-            XCTAssertEqual((resultTuple.trending ?? []).count, 20)
-            XCTAssertEqual((resultTuple.nowPlaying ?? []).count, 20)
-            XCTAssertEqual((resultTuple.top ?? []).count, 20)
-        }.store(in: &subscriptions)
-        wait(for: [expectation], timeout: 0.1)
+        let resultTuple = try? awaitPublisher(repo.loadMoviesList())
+        XCTAssertEqual((resultTuple?.trending ?? []).count, 20)
+        XCTAssertEqual((resultTuple?.nowPlaying ?? []).count, 20)
+        XCTAssertEqual((resultTuple?.top ?? []).count, 20)
     }
     
     func testRepoSearchMovie() {
-        let expectation = expectation(description: "search movie")
-        repo.search(query: "avatar").sink(receiveCompletion: {print($0)}) { result in
-            expectation.fulfill()
-            XCTAssertEqual(result.count, 20)
-        }.store(in: &subscriptions)
-        wait(for: [expectation], timeout: 0.1)
-    }
-    
-    func testRepoSearchMovieEmpty() {
-        let expectation = expectation(description: "search movie empty")
-        repo.search(query: "").sink(receiveCompletion: {print($0)}) { result in
-            expectation.fulfill()
-            XCTAssertEqual(result.count, 0)
-        }.store(in: &subscriptions)
-        wait(for: [expectation], timeout: 0.1)
+        let result = try? awaitPublisher(repo.search(query: "avatar"), timeout: 0.1)
+        XCTAssertEqual(result?.count ?? 0, 20)
     }
 }

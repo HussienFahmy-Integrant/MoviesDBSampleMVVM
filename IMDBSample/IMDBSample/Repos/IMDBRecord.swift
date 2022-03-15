@@ -15,7 +15,12 @@ public class IMDBRecord: ObservableObject, Hashable {
     var releaseDate : String = ""
     var title : String = ""
     
-    init(id: Int? = 0, originalTitle: String, overview : String, posterPath : String, releaseDate : String, title: String) {
+    init(id: Int? = 0,
+         originalTitle: String,
+         overview : String,
+         posterPath : String,
+         releaseDate : String,
+         title: String) {
         self.id = id
         self.originalTitle = originalTitle
         self.overview = overview

@@ -26,6 +26,7 @@
 		6999D9742750119800DC47E9 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6999D9732750119800DC47E9 /* SearchBar.swift */; };
 		69A92E96274FF5C400982B10 /* MovieCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69A92E95274FF5C400982B10 /* MovieCardView.swift */; };
 		69A92E98274FF96B00982B10 /* MovieCardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69A92E97274FF96B00982B10 /* MovieCardViewModel.swift */; };
+		69B005D027E0E8AA00466050 /* XCTestCase+AwaitPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69B005CF27E0E8AA00466050 /* XCTestCase+AwaitPublisher.swift */; };
 		69CDAC92275E651900057E60 /* MoviesRaitingviewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69CDAC91275E651900057E60 /* MoviesRaitingviewModel.swift */; };
 		69CDAC94275E76B700057E60 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69CDAC93275E76B700057E60 /* LoadingView.swift */; };
 		B430DC6264DD13070D1B8054 /* Pods_IMDBSample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 818AB1FF0923B410B90655FA /* Pods_IMDBSample.framework */; };
@@ -68,6 +69,7 @@
 		6999D9732750119800DC47E9 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		69A92E95274FF5C400982B10 /* MovieCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieCardView.swift; sourceTree = "<group>"; };
 		69A92E97274FF96B00982B10 /* MovieCardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieCardViewModel.swift; sourceTree = "<group>"; };
+		69B005CF27E0E8AA00466050 /* XCTestCase+AwaitPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+AwaitPublisher.swift"; sourceTree = "<group>"; };
 		69CDAC91275E651900057E60 /* MoviesRaitingviewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesRaitingviewModel.swift; sourceTree = "<group>"; };
 		69CDAC93275E76B700057E60 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		818AB1FF0923B410B90655FA /* Pods_IMDBSample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_IMDBSample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -177,6 +179,7 @@
 				6986EE14274FD085007F7E89 /* IMDBSampleTests.swift */,
 				6986EE16274FD086007F7E89 /* Info.plist */,
 				69577589276B80A100683386 /* MockIMDBNetwork.swift */,
+				69B005CF27E0E8AA00466050 /* XCTestCase+AwaitPublisher.swift */,
 			);
 			path = IMDBSampleTests;
 			sourceTree = "<group>";
@@ -421,6 +424,7 @@
 			files = (
 				6957758A276B80A100683386 /* MockIMDBNetwork.swift in Sources */,
 				6986EE15274FD085007F7E89 /* IMDBSampleTests.swift in Sources */,
+				69B005D027E0E8AA00466050 /* XCTestCase+AwaitPublisher.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
