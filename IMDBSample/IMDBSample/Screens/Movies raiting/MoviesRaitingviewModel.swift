@@ -28,14 +28,17 @@ class MoviesRaitingviewModel: ObservableObject {
     
     func composeMoviesListPublishers() {
         isLoading.toggle()
-        repo.loadMoviesList().receive(on: DispatchQueue.main).sink {
+        repo.loadMoviesList().sink {
             print($0)
-        } receiveValue: {[weak self] resultTuple in
-            guard let self = self else { return }
-            self.isLoading.toggle()
-            self.trending = resultTuple.trending ?? []
-            self.nowPlaying = resultTuple.nowPlaying ?? []
-            self.top = resultTuple.top ?? []
+        } receiveValue: { resultTuple in
+            Task {
+                await MainActor.run {
+                    self.isLoading.toggle()
+                    self.trending = resultTuple.trending ?? []
+                    self.nowPlaying = resultTuple.nowPlaying ?? []
+                    self.top = resultTuple.top ?? []
+                }
+            }
         }.store(in: &subscriptions)
     }
     
