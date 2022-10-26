@@ -7,15 +7,19 @@
 
 import Foundation
 import Combine
-public protocol IMDBNetworkProcotol {
-    var networkLayer: NetworkLayerProtocol { get set }
-    func getExec(endPoint: IMDBConstants.IMDBEndPoints, params: [String: Any]?) -> AnyPublisher<IMDBResponseRootClass, Error>
+enum IMDBNetworkError: Error {
+   case urlInvalid
 }
 
-final class IMDBNetwork: IMDBNetworkProcotol {
+public protocol IMDBNetworkProtocol {
+    var networkLayer: NetworkLayerProtocol { get set }
+    func getExec(endPoint: IMDBConstants.IMDBEndPoints, params: [String : Any]?) async throws -> IMDBResponseRootClass
+    }
+
+final class IMDBNetwork: IMDBNetworkProtocol {
     var networkLayer: NetworkLayerProtocol = NetworkLayer()    
     
-    func getExec(endPoint: IMDBConstants.IMDBEndPoints, params: [String: Any]?) -> AnyPublisher<IMDBResponseRootClass, Error> {
+    func getExec(endPoint: IMDBConstants.IMDBEndPoints, params: [String : Any]?) async throws -> IMDBResponseRootClass {
         var url = IMDBConstants.baseURL +
             endPoint.rawValue +
             "?api_key=" + IMDBConstants.apiKey
@@ -27,10 +31,12 @@ final class IMDBNetwork: IMDBNetworkProcotol {
             url.removeLast()
         }
         url = url.replacingOccurrences(of: " ", with: "+")
-        let urlObject = URL(string: url)!
-        let request = URLRequest(url: urlObject)
-        return networkLayer.exec(request: request)
-        
+        if let urlObject = URL(string: url) {
+            let request = URLRequest(url: urlObject)
+            let response = try await networkLayer.exec(request, IMDBResponseRootClass.self)
+            return response
+        }
+        throw IMDBNetworkError.urlInvalid
     }
     
 }

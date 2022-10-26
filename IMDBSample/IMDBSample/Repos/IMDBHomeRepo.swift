@@ -11,14 +11,14 @@ import Combine
 public typealias IMDBHomeRecordsTuple = (top: [IMDBRecord]?,trending: [IMDBRecord]?,nowPlaying: [IMDBRecord]?)
 
 protocol IMDBHomeRepoProtocol {
-    var networkHandler: IMDBNetworkProcotol { set get }
-    func loadMoviesList() -> AnyPublisher<IMDBHomeRecordsTuple, Error>
-    func search(query: String) -> AnyPublisher<[IMDBRecord], Error>
+    var networkHandler: IMDBNetworkProtocol { set get }
+    func loadMoviesList() async throws -> IMDBHomeRecordsTuple
+    func search(query: String) async throws -> [IMDBRecord]
 }
 
 final class IMDBHomeRepo: IMDBHomeRepoProtocol {
     
-    public var networkHandler: IMDBNetworkProcotol = IMDBNetwork()
+    public var networkHandler: IMDBNetworkProtocol = IMDBNetwork()
     
     private let mapClosure: (IMDBResponseResult) -> (IMDBRecord) = {
         IMDBRecord(id: $0.id,
@@ -33,15 +33,12 @@ final class IMDBHomeRepo: IMDBHomeRepoProtocol {
     enum IMDBParams: String {
         case query
     }
-    
-    func loadMoviesList() -> AnyPublisher<IMDBHomeRecordsTuple, Error> {
-        
-        let trending = networkHandler.getExec(endPoint: .trendingMoviesDay, params: nil).map { $0.results }
-        let nowPlaying = networkHandler.getExec(endPoint: .nowPlaying, params: nil).map { $0.results }
-        let top = networkHandler.getExec(endPoint: .topRated, params: nil).map { $0.results }
-        
-        return trending.zip(nowPlaying, top).map { (trending, nowPlaying, top) in
-            
+
+    func loadMoviesList() async throws -> IMDBHomeRecordsTuple {
+        do {
+            let trending = try await networkHandler.getExec(endPoint: .trendingMoviesDay, params: nil).results
+            let nowPlaying = try await networkHandler.getExec(endPoint: .nowPlaying, params: nil).results
+            let top = try await networkHandler.getExec(endPoint: .topRated, params: nil).results
             let trendingRecords = trending?.compactMap {
                 self.mapClosure($0)
             }
@@ -54,18 +51,17 @@ final class IMDBHomeRepo: IMDBHomeRepoProtocol {
                 self.mapClosure($0)
             }
             return (top: topRecords,trending: trendingRecords,nowPlaying: nowPlayingRecords)
-        }.eraseToAnyPublisher()
+        }
     }
     
-    func search(query: String) -> AnyPublisher<[IMDBRecord], Error> {
-        return networkHandler.getExec(endPoint: .search,
-                                      params: [IMDBParams.query.rawValue: query])
-            .map {
-                let results = $0.results ?? []
-                return results.compactMap {
-                    self.mapClosure($0)
-                }
-            }
-            .eraseToAnyPublisher()
+    func search(query: String) async throws -> [IMDBRecord] {
+        do {
+            let results = try await networkHandler.getExec(endPoint: .search,
+                                                           params: [IMDBParams.query.rawValue: query]).results
+            return results?.compactMap {
+                self.mapClosure($0)
+            } ?? []
+        }
     }
+
 }

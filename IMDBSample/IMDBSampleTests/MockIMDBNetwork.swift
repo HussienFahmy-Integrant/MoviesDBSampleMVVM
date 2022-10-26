@@ -9,10 +9,10 @@ import Foundation
 import Combine
 @testable import IMDBSample
 
-class MockIMDBNetwork: IMDBNetworkProcotol {
+class MockIMDBNetwork: IMDBNetworkProtocol {
     var networkLayer: NetworkLayerProtocol = NetworkLayer()
     
-    func getExec(endPoint: IMDBConstants.IMDBEndPoints, params: [String : Any]?) -> AnyPublisher<IMDBResponseRootClass, Error> {
+    func getExec(endPoint: IMDBConstants.IMDBEndPoints, params: [String : Any]?) async throws -> IMDBResponseRootClass {
         var url: URL?
         let bundle = Bundle(for: type(of: self))
         switch endPoint {
@@ -27,10 +27,11 @@ class MockIMDBNetwork: IMDBNetworkProcotol {
         default:
             break
         }
-        
-        let request = URLRequest(url: url!)
-        return networkLayer.exec(request: request)
+        if let url = url {
+            let request = URLRequest(url: url)
+            return try await networkLayer.exec(request, IMDBResponseRootClass.self)
+        } else {
+            throw IMDBNetworkError.urlInvalid
+        }
     }
-    
-    
 }

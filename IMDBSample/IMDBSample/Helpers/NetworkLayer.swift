@@ -8,23 +8,17 @@
 import Foundation
 import Combine
 public protocol NetworkLayerProtocol {
-    func exec<DataModel>(
-        request: URLRequest
-    )
-    -> AnyPublisher<DataModel, Error>
-    where DataModel : Codable
+    func exec<T>(_ request: URLRequest,_ responseModel: T.Type) async throws -> T where T: Codable
 }
 
 final class NetworkLayer: NetworkLayerProtocol {
-    func exec<DataModel>(
-        request: URLRequest
-    )
-    -> AnyPublisher<DataModel, Error>
-    where DataModel : Codable {
-        return URLSession.shared.dataTaskPublisher(for: request)
-            .map { $0.data }
-            .decode(type: DataModel.self, decoder: JSONDecoder().self)
-            .eraseToAnyPublisher()
-    }
     
+    func exec<T>(_ request: URLRequest,_ responseModel: T.Type) async throws -> T where T: Codable {
+        do {
+            let sessionRequest = try await URLSession.shared.data(for: request)
+            let jsonDecoder = JSONDecoder()
+            let data = sessionRequest.0
+            return try jsonDecoder.decode(responseModel, from: data)
+        }
+    }
 }

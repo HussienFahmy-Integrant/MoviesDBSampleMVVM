@@ -22,24 +22,28 @@ class MoviesRaitingviewModel: ObservableObject {
     
     init(repo: IMDBHomeRepoProtocol) {
         self.repo = repo
-        composeMoviesListPublishers()
         composeSearchMoviePublisher()
+        didAppear()
     }
     
-    func composeMoviesListPublishers() {
+    func didAppear() {
         isLoading.toggle()
-        repo.loadMoviesList().sink {
-            print($0)
-        } receiveValue: { resultTuple in
-            Task {
+        Task {
+            do {
+                let resultTuple = try await repo.loadMoviesList()
                 await MainActor.run {
                     self.isLoading.toggle()
                     self.trending = resultTuple.trending ?? []
                     self.nowPlaying = resultTuple.nowPlaying ?? []
                     self.top = resultTuple.top ?? []
                 }
+            } catch {
+                await MainActor.run {
+                    self.isLoading.toggle()
+                    print("Error happened while loading movies list: \(error.localizedDescription)")
+                }
             }
-        }.store(in: &subscriptions)
+        }
     }
     
     func composeSearchMoviePublisher() {
@@ -47,10 +51,15 @@ class MoviesRaitingviewModel: ObservableObject {
             guard let self = self else { return }
             if !keyword.isEmpty {
                 self.isLoading.toggle()
-                self.repo.search(query: keyword).receive(on: DispatchQueue.main).sink(receiveCompletion: {print($0)}) { results in
-                    self.searchResults = results
-                    self.isLoading.toggle()
-                }.store(in: &self.subscriptions)
+                Task {
+                    do {
+                        let results = try await self.repo.search(query: keyword)
+                        await MainActor.run {
+                            self.searchResults = results
+                            self.isLoading.toggle()
+                        }
+                    }
+                }
             }
         }.store(in: &subscriptions)
     }

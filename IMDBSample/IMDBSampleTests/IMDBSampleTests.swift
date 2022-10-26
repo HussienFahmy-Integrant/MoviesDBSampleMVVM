@@ -17,15 +17,27 @@ class IMDBSampleTests: XCTestCase {
         repo.networkHandler = MockIMDBNetwork()
     }
     
-    func testRepoLoadMovies() {
-        let resultTuple = try? awaitPublisher(repo.loadMoviesList())
-        XCTAssertEqual((resultTuple?.trending ?? []).count, 20)
-        XCTAssertEqual((resultTuple?.nowPlaying ?? []).count, 20)
-        XCTAssertEqual((resultTuple?.top ?? []).count, 20)
+    func testRepoLoadMovies() async {
+        do {
+            let resultTuple = try await repo.loadMoviesList()
+            XCTAssertEqual((resultTuple.trending ?? []).count, 20)
+            XCTAssertEqual((resultTuple.nowPlaying ?? []).count, 20)
+            XCTAssertEqual((resultTuple.top ?? []).count, 20)
+        }
+        catch {
+            print("Unit testing Error: \(error)")
+            XCTFail(error.localizedDescription)
+        }
     }
     
-    func testRepoSearchMovie() {
-        let result = try? awaitPublisher(repo.search(query: "avatar"), timeout: 0.1)
-        XCTAssertEqual(result?.count ?? 0, 20)
+    func testRepoSearchMovie() async{
+        do {
+            let result = try await repo.search(query: "avatar")
+            XCTAssertEqual(result.count, 20)
+        }
+        catch {
+            print("Unit testing Error: \(error)")
+            XCTFail(error.localizedDescription)
+        }
     }
 }
